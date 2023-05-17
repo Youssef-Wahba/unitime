@@ -154,8 +154,8 @@ public class PdfExamGridTable extends ExamGridTable {
         if (iForm.getDispMode()==DispMode.InRowHorizontal.ordinal()) {
             for (Integer day : days) {
                 for (Integer slot : slots()) {
-                    boolean eod = (slot==slots.last());
-                    boolean eol = (eod && day==days.last());
+                    boolean eod = (slot.equals(slots.last()));
+                    boolean eol = (eod && day.equals(days.last()));
                     printHeaderCell(getDayName(day)+"<br>"+getSlotName(slot), vertical, eod, eol);
                 }
             }
@@ -166,25 +166,25 @@ public class PdfExamGridTable extends ExamGridTable {
             }
         } else if (iForm.getDispMode()==DispMode.PerDayHorizontal.ordinal()) {
             for (Integer slot : slots()) {
-                boolean eol = (slot==slots.last());
+                boolean eol = (slot.equals(slots.last()));
                 printHeaderCell(getSlotName(slot)+"<br> ", vertical, false, eol);
             }
         } else if (iForm.getDispMode()==DispMode.PerDayVertical.ordinal()) {
             for (Integer day : days) {
-                boolean eol = (day==days.last());
+                boolean eol = (day.equals(days.last()));
                 printHeaderCell(getDayName(day)+"<br> ", vertical, false, eol);
             }
         } else if (iForm.getDispMode()==DispMode.PerWeekHorizontal.ordinal()) {
             for (Integer week : weeks) {
                 for (Integer slot : slots) {
-                    boolean eod = (slot==slots.last());
-                    boolean eol = eod && (week==weeks.last());
+                    boolean eod = (slot.equals(slots.last()));
+                    boolean eol = eod && (week.equals(weeks.last()));
                     printHeaderCell(getWeekName(week)+"<br>"+getSlotName(slot), vertical, eod, eol);
                 }
             }
         } else if (iForm.getDispMode()==DispMode.PerWeekVertical.ordinal()) {
             for (Integer dow : daysOfWeek) {
-                boolean eol = (dow==daysOfWeek.last());
+                boolean eol = (dow.equals(daysOfWeek.last()));
                 printHeaderCell(getDayOfWeekName(dow)+"<br> ", vertical, false, eol);
             }
         }
@@ -231,8 +231,7 @@ public class PdfExamGridTable extends ExamGridTable {
             addText(c, " ");
         } else {
             String bgColor = cell.getBackground();
-            if (iForm.getBackground()==Background.None.ordinal() && !sBgColorNotAvailable.equals(bgColor)) {
-                if (!model.isAvailable(period))
+            if (iForm.getBackground()==Background.None.ordinal() && !sBgColorNotAvailable.equals(bgColor) && !model.isAvailable(period)) {
                     bgColor = sBgColorNotAvailableButAssigned;
             }
             if (bgColor!=null)
@@ -278,13 +277,13 @@ public class PdfExamGridTable extends ExamGridTable {
                     if (getPeriod(day, slot)==null) continue;
                     int maxIdx = getMaxIdx(day, slot);
                     for (int idx=0;idx<=maxIdx;idx++) {
-                        printRowHeaderCell(getDayName(day)+"<br>"+getSlotName(slot), idx, maxIdx, vertical, head && slot==slots.first(), globalMaxIdx==0);
+                        printRowHeaderCell(getDayName(day)+"<br>"+getSlotName(slot), idx, maxIdx, vertical, head && slot.equals(slots.first()), globalMaxIdx==0);
                         for (ExamGridModel model : models()) {
                             printCell(model,
                                     day,
                                     slot,
                                     idx, maxIdx,
-                                    head && slot==slots.first() && idx==0, vertical, globalMaxIdx==0 || idx>0,
+                                    head && slot.equals(slots.first()) && idx==0, vertical, globalMaxIdx==0 || idx>0,
                                     false, model.equals(models().lastElement()));
                         }
                     }
@@ -303,8 +302,8 @@ public class PdfExamGridTable extends ExamGridTable {
                         printRowHeaderCell(model.getName()+(model.getSize()>0?" ("+model.getSize()+")":"")+"<br> ", idx, maxIdx, vertical, (rowNumber%10==0), tmx==0);
                         for (Integer day:days) {
                             for (Integer slot:slots) {
-                                boolean eod = (slot==slots.last());
-                                boolean eol = (eod && day==days.last());
+                                boolean eod = (slot.equals(slots.last()));
+                                boolean eol = (eod && day.equals(days.last()));
                                 printCell(model,
                                         day,
                                         slot,
@@ -321,14 +320,14 @@ public class PdfExamGridTable extends ExamGridTable {
                     for (Integer slot:slots) {
                         int maxIdx = getMaxIdx(model, days.first(), days.last(), slot, slot);
                         for (int idx=0;idx<=maxIdx;idx++) {
-                            printRowHeaderCell(getSlotName(slot)+"<br> ", idx, maxIdx, vertical, slot==slots.first(), gmx==0);
+                            printRowHeaderCell(getSlotName(slot)+"<br> ", idx, maxIdx, vertical, slot.equals(slots.first()), gmx==0);
                             for (Integer day:days) {
                                 printCell(model,
                                         day,
                                         slot,
                                         idx, maxIdx,
-                                        slot==slots.first() && idx==0, vertical, gmx==0 || idx>0,
-                                        false, (day==days.last()));
+                                        slot.equals(slots.first()) && idx==0, vertical, gmx==0 || idx>0,
+                                        false, (day.equals(days.last())));
                             }
                         }
                     }
@@ -339,14 +338,14 @@ public class PdfExamGridTable extends ExamGridTable {
                     for (Integer day:days) {
                         int maxIdx = getMaxIdx(model, day, day,slots.first(),slots.last());
                         for (int idx=0;idx<=maxIdx;idx++) {
-                            printRowHeaderCell(getDayName(day)+"<br> ", idx, maxIdx, vertical, day==days.first(), gmx==0);
+                            printRowHeaderCell(getDayName(day)+"<br> ", idx, maxIdx, vertical, day.equals(days.first()), gmx==0);
                             for (Integer slot:slots) {
                                 printCell(model,
                                         day,
                                         slot,
                                         idx, maxIdx,
-                                        day==days.first() && idx==0, vertical, gmx==0 || idx>0,
-                                        false, (slot==slots.last()));
+                                        day.equals(days.first()) && idx==0, vertical, gmx==0 || idx>0,
+                                        false, (slot.equals(slots.last())));
                             }
                         }
                     }
@@ -357,15 +356,15 @@ public class PdfExamGridTable extends ExamGridTable {
                     for (Integer dow:daysOfWeek()) {
                         int maxIdx = getMaxIdx(model, dow,slots.first(),slots.last());
                         for (int idx=0;idx<=maxIdx;idx++) {
-                            printRowHeaderCell(getDayOfWeekName(dow)+"<br> ", idx, maxIdx, vertical, dow==daysOfWeek.first(), gmx==0);
+                            printRowHeaderCell(getDayOfWeekName(dow)+"<br> ", idx, maxIdx, vertical, dow.equals(daysOfWeek.first()), gmx==0);
                             for (Integer week : weeks) {
                                 for (Integer slot:slots) {
                                     printCell(model,
                                             getDay(week,dow),
                                             slot,
                                             idx, maxIdx,
-                                            dow==daysOfWeek.first() && idx==0, vertical, gmx==0 || idx>0,
-                                            (slot==slots.last()), (slot==slots.last() && week==weeks.last()));
+                                            dow.equals(daysOfWeek.first()) && idx==0, vertical, gmx==0 || idx>0,
+                                            (slot.equals(slots.last())), (slot.equals(slots.last()) && week.equals(weeks.last())));
                                 }
                             }
                         }
@@ -378,15 +377,15 @@ public class PdfExamGridTable extends ExamGridTable {
                         for (Integer slot:slots) {
                             int maxIdx = getMaxIdx(model, week,slot);
                             for (int idx=0;idx<=maxIdx;idx++) {
-                                printRowHeaderCell(getWeekName(week) +"<br>"+ getSlotName(slot), idx, maxIdx, vertical, slot==slots.first(), gmx==0);
+                                printRowHeaderCell(getWeekName(week) +"<br>"+ getSlotName(slot), idx, maxIdx, vertical, slot.equals(slots.first()), gmx==0);
                                 for (Integer dow : daysOfWeek) {
                                     printCell(model, 
                                             getDay(week,dow), 
                                             slot, 
                                             idx, 
                                             maxIdx, 
-                                            slot==slots.first() && idx==0, vertical, gmx==0 || idx>0, 
-                                            false, (dow==daysOfWeek.last()));
+                                            slot.equals(slots.first()) && idx==0, vertical, gmx==0 || idx>0, 
+                                            false, (dow.equals(daysOfWeek.last())));
                                 }
                             }                            
                         }
